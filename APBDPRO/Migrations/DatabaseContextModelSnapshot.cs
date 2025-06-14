@@ -46,6 +46,29 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Client");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Adres = "Street 1",
+                            Email = "client1@example.com",
+                            PhoneNumber = 111111111
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Adres = "Street 2",
+                            Email = "client2@example.com",
+                            PhoneNumber = 222222222
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Adres = "Street 3",
+                            Email = "client3@example.com",
+                            PhoneNumber = 333333333
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Company", b =>
@@ -53,16 +76,39 @@ namespace APBDPRO.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("KRS")
-                        .HasColumnType("int");
+                    b.Property<string>("KRS")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Company");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            KRS = "1234567891",
+                            Name = "Company A"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            KRS = "4323552342",
+                            Name = "Company B"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            KRS = "2754633906",
+                            Name = "Company C"
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Discount", b =>
@@ -90,6 +136,32 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Discounts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateFrom = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateTo = new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "New Year",
+                            Value = 10
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateFrom = new DateTime(2025, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateTo = new DateTime(2025, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Summer Sale",
+                            Value = 15
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DateFrom = new DateTime(2025, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateTo = new DateTime(2025, 11, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Black Friday",
+                            Value = 25
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.DiscountSoftware", b =>
@@ -105,12 +177,32 @@ namespace APBDPRO.Migrations
                     b.HasIndex("DiscountsId");
 
                     b.ToTable("Discount_Software");
+
+                    b.HasData(
+                        new
+                        {
+                            SoftwareId = 1,
+                            DiscountsId = 1
+                        },
+                        new
+                        {
+                            SoftwareId = 2,
+                            DiscountsId = 2
+                        },
+                        new
+                        {
+                            SoftwareId = 3,
+                            DiscountsId = 3
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Person", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -122,12 +214,40 @@ namespace APBDPRO.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("PESEL")
-                        .HasColumnType("int");
+                    b.Property<string>("PESEL")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Person");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Deleted = false,
+                            FirstName = "John",
+                            LastName = "Doe",
+                            PESEL = "12345678901"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Deleted = false,
+                            FirstName = "Jane",
+                            LastName = "Smith",
+                            PESEL = "23456789012"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Deleted = false,
+                            FirstName = "Alice",
+                            LastName = "Brown",
+                            PESEL = "34567890123"
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Sell", b =>
@@ -148,6 +268,26 @@ namespace APBDPRO.Migrations
                     b.HasIndex("SoftwareId");
 
                     b.ToTable("Sells");
+
+                    b.HasData(
+                        new
+                        {
+                            ClientId = 1,
+                            SoftwareId = 1,
+                            SellTypeId = 1
+                        },
+                        new
+                        {
+                            ClientId = 2,
+                            SoftwareId = 2,
+                            SellTypeId = 2
+                        },
+                        new
+                        {
+                            ClientId = 3,
+                            SoftwareId = 3,
+                            SellTypeId = 3
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.SellType", b =>
@@ -166,6 +306,23 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SellTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Online"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Retail"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Wholesale"
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Software", b =>
@@ -183,8 +340,8 @@ namespace APBDPRO.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -199,6 +356,32 @@ namespace APBDPRO.Migrations
                     b.HasIndex("SoftwareCategoryId");
 
                     b.ToTable("Software");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActualVersion = "1.0",
+                            Description = "Protects from viruses",
+                            Name = "Antivirus",
+                            SoftwareCategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActualVersion = "2.1",
+                            Description = "For documents",
+                            Name = "Word Processor",
+                            SoftwareCategoryId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ActualVersion = "3.3",
+                            Description = "For coding",
+                            Name = "IDE",
+                            SoftwareCategoryId = 3
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.SoftwareCategory", b =>
@@ -217,6 +400,23 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Software_Category");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Security"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Office"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Development"
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.User", b =>
@@ -287,6 +487,16 @@ namespace APBDPRO.Migrations
                         {
                             Id = 1,
                             Name = "User"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Moderator"
                         });
                 });
 

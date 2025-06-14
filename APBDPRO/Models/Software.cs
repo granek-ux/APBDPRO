@@ -9,7 +9,7 @@ public class Software
 {
     public int Id { get; set; }
     [MaxLength(20)] public string Name { get; set; } = null!;
-    [MaxLength(20)] public string Description { get; set; } = null!;
+    [MaxLength(200)] public string Description { get; set; } = null!;
     [MaxLength(20)] public string ActualVersion { get; set; } = null!;
     
     [ForeignKey(nameof(SoftwareCategory))]

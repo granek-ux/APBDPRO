@@ -1,3 +1,8 @@
+using APBD25_CW11.Exceptions;
+using APBDPRO.Models;
+using APBDPRO.Models.Dtos;
+using APBDPRO.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,13 +10,83 @@ namespace APBDPRO.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    // [Authorize]
     public class ClientController : ControllerBase
     {
+        private readonly IClientService _clientService;
+
+        public ClientController(IClientService clientService)
+        {
+            _clientService = clientService;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
             return Ok();
         }
-        
+
+        [HttpPost("Person")]
+        public async Task<IActionResult> AddPersonAsync([FromBody] PersonDto person,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _clientService.AddPersonAsync(person, cancellationToken);
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ConflictException e)
+            {
+                return Conflict(e.Message);
+            }
+            catch (Exception e)
+            {
+                return Problem("Unexpected error occurred", statusCode: 500);
+            }
+            return Created();
+        }
+
+        [HttpDelete("Person/{pesel}")]
+        public async Task<IActionResult> DeletePersonAsync(string pesel, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _clientService.DeletePersonAsync(pesel, cancellationToken);
+                return Ok();
+            }
+            catch (BadRequestException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }catch (Exception e)
+            {
+                return Problem("Unexpected error occurred", statusCode: 500);
+            }
+            
+        }
+
+        [HttpPost("Company")]
+        public async Task<IActionResult> AddCompanyAsync([FromBody] CompanyDto company,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _clientService.AddCompanyAsync(company, cancellationToken);
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }catch (Exception e)
+            {
+                return Problem("Unexpected error occurred", statusCode: 500);
+            }
+            return Created();
+        }
     }
 }

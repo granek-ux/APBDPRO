@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace APBDPRO.Migrations
 {
     /// <inheritdoc />
@@ -86,8 +88,8 @@ namespace APBDPRO.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    KRS = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    KRS = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -107,7 +109,8 @@ namespace APBDPRO.Migrations
                     Id = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PESEL = table.Column<int>(type: "int", nullable: false)
+                    PESEL = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,7 +130,7 @@ namespace APBDPRO.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     ActualVersion = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     SoftwareCategoryId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -223,9 +226,104 @@ namespace APBDPRO.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Client",
+                columns: new[] { "Id", "Adres", "Email", "PhoneNumber" },
+                values: new object[,]
+                {
+                    { 1, "Street 1", "client1@example.com", 111111111 },
+                    { 2, "Street 2", "client2@example.com", 222222222 },
+                    { 3, "Street 3", "client3@example.com", 333333333 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Discounts",
+                columns: new[] { "Id", "DateFrom", "DateTo", "Name", "Value" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "New Year", 10 },
+                    { 2, new DateTime(2025, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Summer Sale", 15 },
+                    { 3, new DateTime(2025, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 11, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), "Black Friday", 25 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SellTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Online" },
+                    { 2, "Retail" },
+                    { 3, "Wholesale" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Software_Category",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Security" },
+                    { 2, "Office" },
+                    { 3, "Development" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users_Roles",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "User" });
+                values: new object[,]
+                {
+                    { 1, "User" },
+                    { 2, "Admin" },
+                    { 3, "Moderator" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Company",
+                columns: new[] { "Id", "KRS", "Name" },
+                values: new object[,]
+                {
+                    { 1, "1234567891", "Company A" },
+                    { 2, "4323552342", "Company B" },
+                    { 3, "2754633906", "Company C" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Person",
+                columns: new[] { "Id", "Deleted", "FirstName", "LastName", "PESEL" },
+                values: new object[,]
+                {
+                    { 1, false, "John", "Doe", "12345678901" },
+                    { 2, false, "Jane", "Smith", "23456789012" },
+                    { 3, false, "Alice", "Brown", "34567890123" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Software",
+                columns: new[] { "Id", "ActualVersion", "Description", "Name", "SoftwareCategoryId" },
+                values: new object[,]
+                {
+                    { 1, "1.0", "Protects from viruses", "Antivirus", 1 },
+                    { 2, "2.1", "For documents", "Word Processor", 2 },
+                    { 3, "3.3", "For coding", "IDE", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Discount_Software",
+                columns: new[] { "DiscountsId", "SoftwareId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 2 },
+                    { 3, 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Sells",
+                columns: new[] { "ClientId", "SoftwareId", "SellTypeId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 2, 2 },
+                    { 3, 3, 3 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Discount_Software_DiscountsId",
