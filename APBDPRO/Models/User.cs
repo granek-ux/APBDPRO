@@ -10,8 +10,6 @@ public class User
 
     [MaxLength(50)] public string Login { get; set; } = null!;
     
-    [MaxLength(50)] public string Email { get; set; } = null!;
-    
     [MaxLength(50)] public string Password { get; set; } = null!;
     
     [MaxLength(50)] public string Salt { get; set; } = null!;

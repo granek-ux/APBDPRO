@@ -59,6 +59,18 @@ builder.Services.AddScoped<IClientService, ClientService>();
             ValidAudience = builder.Configuration["Jwt:Audience"], //should come from configuration
             IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SymmetricSecurityKey"]!))
         };
+    }).AddJwtBearer("OnlyAdminExpirationScheme",opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,   
+            ValidateAudience = true, 
+            ValidateLifetime = false,
+            ClockSkew = TimeSpan.FromMinutes(2),
+            ValidIssuer = builder.Configuration["Jwt:Issuer"], 
+            ValidAudience = builder.Configuration["Jwt:Audience"], //should come from configuration
+            IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SymmetricSecurityKey"]!))
+        };
     });
 
 var app = builder.Build();

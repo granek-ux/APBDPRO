@@ -33,7 +33,6 @@ public class DatabaseContext : DbContext
         {
             new UserRole() { Id = 1, Name = "User" },
             new UserRole() { Id = 2, Name = "Admin" },
-            new UserRole() { Id = 3, Name = "Moderator" }
         });
 
 

@@ -86,8 +86,37 @@ public class ClientService : IClientService
         return;
     }
 
+    public async Task EditPersonAsync(string pesel, PersonEditDto personDto, CancellationToken cancellationToken)
+    {
+        if (pesel.Length != 11)
+            throw new BadRequestException("PESEL must be 11 characters long");
+        var person = await _context.People.Include(e => e.Client).FirstOrDefaultAsync(e=> e.PESEL == pesel, cancellationToken);
+        if (person is null)
+            throw new NotFoundException($"Person with PESEL {pesel} not found");
+        
+        if (personDto.FirstName != null && personDto.FirstName != person.FirstName)
+            person.FirstName = personDto.FirstName;
+        
+        if (personDto.LastName != null && personDto.LastName != person.LastName)
+            person.LastName = personDto.LastName;
+        
+        if (personDto.Address != null && personDto.Address != person.Client.Adres)
+            person.Client.Adres = personDto.Address;
+        
+        if (personDto.Email != null && personDto.Email != person.Client.Email)
+            person.Client.Email = personDto.Email;
+        
+        if (personDto.PhoneNumber != null && personDto.PhoneNumber != person.Client.PhoneNumber)
+            person.Client.PhoneNumber = (int)personDto.PhoneNumber;
+        
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task AddCompanyAsync(CompanyDto companyDto, CancellationToken cancellationToken)
     {
+        if (companyDto.KRS.Length != 10)
+            throw new BadRequestException("KRS must be 10 characters long");
+        
         var company = await _context.Clients.Include(e => e.Person)
             .FirstOrDefaultAsync(e => e.Company.KRS == companyDto.KRS, cancellationToken);
         if (company != null)
@@ -123,5 +152,30 @@ public class ClientService : IClientService
             throw;
         }
         return;
+    }
+
+    public async Task EditCompanyAsync(string krs, CompanyEditDto companyDto, CancellationToken cancellationToken)
+    {
+        if (krs.Length != 10)
+            throw new BadRequestException("KRS must be 10 characters long");
+        
+        var person = await _context.Companies.Include(e => e.Client).FirstOrDefaultAsync(e=> e.KRS == krs, cancellationToken);
+        if (person is null)
+            throw new NotFoundException($"Company with KRS {krs} not found");
+        
+        if (companyDto.Name != null && companyDto.Name != person.Name)
+            person.Name = companyDto.Name;
+        
+        if (companyDto.Address != null && companyDto.Address != person.Client.Adres)
+            person.Client.Adres = companyDto.Address;
+        
+        if (companyDto.Email != null && companyDto.Email != person.Client.Email)
+            person.Client.Email = companyDto.Email;
+        
+        if (companyDto.PhoneNumber != null && companyDto.PhoneNumber != person.Client.PhoneNumber)
+            person.Client.PhoneNumber = (int)companyDto.PhoneNumber;
+        
+        await _context.SaveChangesAsync(cancellationToken);
+        
     }
 }

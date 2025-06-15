@@ -30,7 +30,6 @@ public class UserService : IUserService
 
         var user = new User()
         {
-            Email = registerDto.Email,
             Login = registerDto.Login,
             Password = hashedPasswordAndSalt.Item1,
             Salt = hashedPasswordAndSalt.Item2,
@@ -46,7 +45,8 @@ public class UserService : IUserService
 
     public async Task<Tuple<string, string>> LoginUserAsync(LoginDto loginDto, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.Include(e=> e.UserRole ).FirstOrDefaultAsync(e => e.Login == loginDto.Login, cancellationToken);
+        var user = await _context.Users.Include(e => e.UserRole)
+            .FirstOrDefaultAsync(e => e.Login == loginDto.Login, cancellationToken);
         if (user is null)
             throw new UnauthorizedException("Invalid login or password");
 
@@ -57,16 +57,18 @@ public class UserService : IUserService
             throw new UnauthorizedException("Invalid login or password");
 
         var accessToken = CreateAccessTokenAsync(user);
-        
+
         user.RefreshToken = SecurityHelpers.GenerateRefreshToken();
         user.RefreshTokenExp = DateTime.UtcNow.AddDays(1);
         await _context.SaveChangesAsync(cancellationToken);
         return new Tuple<string, string>(accessToken, user.RefreshToken);
     }
 
-    public async Task<Tuple<string, string>> RefreshAsync(RefreshTokenDto refreshToken, CancellationToken cancellationToken)
+    public async Task<Tuple<string, string>> RefreshAsync(RefreshTokenDto refreshToken,
+        CancellationToken cancellationToken)
     {
-        var user = await _context.Users.Include(e=> e.UserRole ).FirstOrDefaultAsync(e => e.RefreshToken == refreshToken.RefreshToken, cancellationToken);
+        var user = await _context.Users.Include(e => e.UserRole)
+            .FirstOrDefaultAsync(e => e.RefreshToken == refreshToken.RefreshToken, cancellationToken);
         if (user is null)
         {
             throw new SecurityException("Invalid refresh token");
@@ -76,8 +78,9 @@ public class UserService : IUserService
         {
             throw new SecurityException("Refresh token expired");
         }
+
         var accessToken = CreateAccessTokenAsync(user);
-        
+
 
         return new Tuple<string, string>(accessToken, user.RefreshToken);
     }
