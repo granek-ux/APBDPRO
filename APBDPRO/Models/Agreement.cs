@@ -3,20 +3,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APBDPRO.Models;
 
-[Table("Sells")]
+[Table("Agreements")]
 [PrimaryKey(nameof(ClientId), nameof(SoftwareId))]
-public class Sell
+public class Agreement
 {    
     [ForeignKey(nameof(Client))]
     public int ClientId { get; set; }
     [ForeignKey(nameof(Software))]
     public int SoftwareId { get; set; }
-    [ForeignKey(nameof(SellType))]
-    public int SellTypeId { get; set; }
+    
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsPaid { get; set; }
+    public double Price { get; set; }
+    public bool IsSigned { get; set; }
+
     
     public Client Client { get; set; } = null!;
     public Software Software { get; set; } = null!;
-    public SellType SellType { get; set; } = null!;
     
     
 }

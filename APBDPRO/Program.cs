@@ -18,6 +18,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IContractService, ContractService>();
 
     builder.Services.AddAuthentication(options =>
     {

@@ -10,8 +10,7 @@ public class DatabaseContext : DbContext
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<DiscountSoftware> DiscountSoftware { get; set; }
     public DbSet<Person> People { get; set; }
-    public DbSet<Sell> Sells { get; set; }
-    public DbSet<SellType> SellTypes { get; set; }
+    public DbSet<Agreement> Agreements { get; set; }
     public DbSet<Software> Software { get; set; }
     public DbSet<SoftwareCategory> SoftwareCategories { get; set; }
     public DbSet<User> Users { get; set; }
@@ -56,13 +55,7 @@ public class DatabaseContext : DbContext
             new Person() { Id = 2, FirstName = "Jane", LastName = "Smith", PESEL = "23456789012" },
             new Person() { Id = 3, FirstName = "Alice", LastName = "Brown", PESEL = "34567890123" }
         });
-
-        modelBuilder.Entity<SellType>().HasData(new List<SellType>
-        {
-            new SellType() { Id = 1, Name = "Online" },
-            new SellType() { Id = 2, Name = "Retail" },
-            new SellType() { Id = 3, Name = "Wholesale" }
-        });
+        
 
         modelBuilder.Entity<SoftwareCategory>().HasData(new List<SoftwareCategory>
         {
@@ -111,13 +104,6 @@ public class DatabaseContext : DbContext
             new DiscountSoftware() { SoftwareId = 1, DiscountsId = 1 },
             new DiscountSoftware() { SoftwareId = 2, DiscountsId = 2 },
             new DiscountSoftware() { SoftwareId = 3, DiscountsId = 3 }
-        });
-
-        modelBuilder.Entity<Sell>().HasData(new List<Sell>
-        {
-            new Sell() { ClientId = 1, SoftwareId = 1, SellTypeId = 1 },
-            new Sell() { ClientId = 2, SoftwareId = 2, SellTypeId = 2 },
-            new Sell() { ClientId = 3, SoftwareId = 3, SellTypeId = 3 }
         });
     }
 }
