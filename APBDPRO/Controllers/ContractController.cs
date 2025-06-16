@@ -1,3 +1,4 @@
+using APBD25_CW11.Exceptions;
 using APBDPRO.Models.Dtos;
 using APBDPRO.Services;
 using Microsoft.AspNetCore.Http;
@@ -18,10 +19,49 @@ namespace APBDPRO.Controllers
 
 
         [HttpPost("Create")]
-        public async Task<IActionResult> CreateAgreement([FromBody] AddAgreementDto addAgreementDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAgreement([FromBody] AddAgreementDto addAgreementDto,
+            CancellationToken cancellationToken)
         {
-            await _contractService.AddAgreementAsync(addAgreementDto, cancellationToken);
-            return Ok();
+            try
+            {
+                await _contractService.AddAgreementAsync(addAgreementDto, cancellationToken);
+                return Ok();
+            }
+            catch (BadRequestException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return Problem("Unexpected error occurred", statusCode: 500);
+            }
+        }
+
+        [HttpPost("Pay")]
+        public async Task<IActionResult> PayAgreement([FromBody] PayAgreementDto payAgreementDto,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _contractService.PayAgreementAsync(payAgreementDto, cancellationToken);
+                return Ok();
+            }
+            catch (BadRequestException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return Problem("Unexpected error occurred", statusCode: 500);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ public class Software
     [MaxLength(20)] public string Name { get; set; } = null!;
     [MaxLength(200)] public string Description { get; set; } = null!;
     [MaxLength(20)] public string ActualVersion { get; set; } = null!;
+    public double Price { get; set; }
     
     [ForeignKey(nameof(SoftwareCategory))]
     public int SoftwareCategoryId { get; set; }
