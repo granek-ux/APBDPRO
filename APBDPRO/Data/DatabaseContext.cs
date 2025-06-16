@@ -13,6 +13,7 @@ public class DatabaseContext : DbContext
     public DbSet<Agreement> Agreements { get; set; }
     public DbSet<Software> Software { get; set; }
     public DbSet<SoftwareCategory> SoftwareCategories { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; } = null!;
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
 

@@ -53,10 +53,9 @@ public class ContractService : IContractService
         var checkPreviousAgreement =
             await _context.Agreements.AnyAsync(e => e.ClientId == client.Id, cancellationToken);
 
-        //todo dorbić tu liczenie subskybji 
-        var checkPreviousSubscription = false;
+        var checkPreviousSubscription = await _context.Subscriptions.AnyAsync(e => e.ClientId == client.Id, cancellationToken);
 
-        var price = software.Price;
+        var price = addAgreementDto.Price;
 
         price += addAgreementDto.HowMuchLongerAssistance * 1000;
 

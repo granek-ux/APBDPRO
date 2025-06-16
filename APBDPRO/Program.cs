@@ -19,6 +19,8 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
+builder.Services.AddScoped<IProfitService, ProfitService>();
 
     builder.Services.AddAuthentication(options =>
     {

@@ -13,6 +13,8 @@ public class AddAgreementDto
     
     [Required] public int HowMuchLongerAssistance { get; set; }
     
+    [Required] public double Price { get; set; }
+    
     
 
 }
