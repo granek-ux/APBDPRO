@@ -1,6 +1,6 @@
 ﻿namespace APBDPRO.Models.Dtos;
 
-public class PaySubscriptionDto
+public class PaySubscriptionDto : PayAgreementDto
 {
     
 }

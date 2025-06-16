@@ -8,11 +8,9 @@ namespace APBDPRO.Models;
 public class Agreement
 {    
     [Key]
-    public int Id { get; set; }
+    [ForeignKey(nameof(Offer))]
+    public int OfferId { get; set; }
     [ForeignKey(nameof(Client))]
-    public int ClientId { get; set; }
-    [ForeignKey(nameof(Software))]
-    public int SoftwareId { get; set; }
 
     [MaxLength(100)]
     public string SoftwareVersion { get; set; } = null!;
@@ -22,14 +20,9 @@ public class Agreement
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public bool IsPaid { get; set; }
-    public double Price { get; set; }
     public bool IsSigned { get; set; }
     
-    public ICollection<Payment> Payments { get; set; } = null!;
-
-    
-    public Client Client { get; set; } = null!;
-    public Software Software { get; set; } = null!;
+    public Offer Offer { get; set; } = null!;
     
     
 }

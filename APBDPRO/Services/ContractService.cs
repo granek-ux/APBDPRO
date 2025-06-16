@@ -18,6 +18,7 @@ public class ContractService : IContractService
 
     public async Task AddAgreementAsync(AddAgreementDto addAgreementDto, CancellationToken cancellationToken)
     {
+        //todo Tranzact
         if (addAgreementDto.EndDate - addAgreementDto.StartDate < TimeSpan.FromDays(3))
             throw new BadRequestException("Agreement must have at least 3 days");
         if (addAgreementDto.EndDate - addAgreementDto.StartDate > TimeSpan.FromDays(30))
@@ -44,16 +45,16 @@ public class ContractService : IContractService
             throw new NotFoundException("Software not found");
 
         var checkAgreement = await _context.Agreements.FirstOrDefaultAsync(
-            e => e.ClientId == client.Id && e.SoftwareId == software.Id && e.EndDate >= DateTime.Today,
+            e => e.Offer.ClientId == client.Id && e.Offer.SoftwareId == software.Id && e.EndDate >= DateTime.Today,
             cancellationToken);
 
         if (checkAgreement != null)
             throw new ConflictException("Agreement already exists");
 
         var checkPreviousAgreement =
-            await _context.Agreements.AnyAsync(e => e.ClientId == client.Id, cancellationToken);
+            await _context.Agreements.AnyAsync(e => e.Offer.ClientId == client.Id, cancellationToken);
 
-        var checkPreviousSubscription = await _context.Subscriptions.AnyAsync(e => e.ClientId == client.Id, cancellationToken);
+        var checkPreviousSubscription = await _context.Subscriptions.AnyAsync(e => e.Offer.ClientId == client.Id, cancellationToken);
 
         var price = addAgreementDto.Price;
 
@@ -69,15 +70,23 @@ public class ContractService : IContractService
         if (checkPreviousAgreement || checkPreviousSubscription)
             price = price * 0.95;
 
-        var agreement = new Agreement
+        var offer = new Offer()
         {
             ClientId = client.Id,
             SoftwareId = software.Id,
+            Price = price,
+        };
+        
+        await _context.AddAsync(offer, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        var agreement = new Agreement
+        {
+            OfferId = offer.Id,
             SoftwareVersion = software.ActualVersion,
             YearsOfAssistance = 1 + addAgreementDto.HowMuchLongerAssistance,
             StartDate = addAgreementDto.StartDate,
             EndDate = addAgreementDto.EndDate,
-            Price = price,
             IsPaid = false,
             IsSigned = false,
         };
@@ -88,6 +97,10 @@ public class ContractService : IContractService
 
     public async Task PayAgreementAsync(PayAgreementDto payAgreementDto, CancellationToken cancellationToken)
     {
+        
+        if (payAgreementDto.Amount <= 0)
+            throw new BadRequestException("Amount must be greater than 0");
+        
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
 
@@ -114,30 +127,30 @@ public class ContractService : IContractService
 
             var agreement = await _context
                 .Agreements
-                .Include(e => e.Payments)
+                .Include(e => e.Offer).ThenInclude( e=> e.Payments)
                 .FirstOrDefaultAsync(
-                    e => e.ClientId == client.Id && e.SoftwareId == software.Id && e.IsPaid == false &&
+                    e => e.Offer.ClientId == client.Id && e.Offer.SoftwareId == software.Id && e.IsPaid == false &&
                          e.EndDate >= DateTime.Today, cancellationToken);
 
 
             if (agreement is null)
                 throw new NotFoundException("Agreement not found");
 
-            var payedAgreement = agreement.Payments.Sum(e => e.Amount);
+            var payedAgreement = agreement.Offer.Payments.Sum(e => e.Amount);
 
             var wantToPay = payAgreementDto.Amount;
 
 
-            if (payedAgreement + wantToPay >= agreement.Price)
+            if (payedAgreement + wantToPay >= agreement.Offer.Price)
             {
                 agreement.IsPaid = true;
                 agreement.IsSigned = true;
-                wantToPay = agreement.Price - payedAgreement;
+                wantToPay = agreement.Offer.Price - payedAgreement;
             }
 
             var payment = new Payment
             {
-                AgreementId = agreement.Id,
+                AgreementId = agreement.OfferId,
                 Amount = wantToPay,
                 PaymentDate = DateTime.Today,
             };

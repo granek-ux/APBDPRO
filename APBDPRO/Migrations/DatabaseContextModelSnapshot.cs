@@ -24,13 +24,7 @@ namespace APBDPRO.Migrations
 
             modelBuilder.Entity("APBDPRO.Models.Agreement", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClientId")
+                    b.Property<int>("OfferId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
@@ -41,12 +35,6 @@ namespace APBDPRO.Migrations
 
                     b.Property<bool>("IsSigned")
                         .HasColumnType("bit");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("SoftwareId")
-                        .HasColumnType("int");
 
                     b.Property<string>("SoftwareVersion")
                         .IsRequired()
@@ -59,11 +47,7 @@ namespace APBDPRO.Migrations
                     b.Property<int>("YearsOfAssistance")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("SoftwareId");
+                    b.HasKey("OfferId");
 
                     b.ToTable("Agreements");
                 });
@@ -242,6 +226,32 @@ namespace APBDPRO.Migrations
                         });
                 });
 
+            modelBuilder.Entity("APBDPRO.Models.Offer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SoftwareId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("SoftwareId");
+
+                    b.ToTable("Offers");
+                });
+
             modelBuilder.Entity("APBDPRO.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -256,6 +266,9 @@ namespace APBDPRO.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
+                    b.Property<int?>("OfferId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
@@ -265,6 +278,8 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AgreementId");
+
+                    b.HasIndex("OfferId");
 
                     b.ToTable("Payment");
                 });
@@ -425,13 +440,7 @@ namespace APBDPRO.Migrations
 
             modelBuilder.Entity("APBDPRO.Models.Subscription", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClientId")
+                    b.Property<int>("OfferId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -439,23 +448,13 @@ namespace APBDPRO.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
                     b.Property<double>("PriceForFirstInstallment")
                         .HasColumnType("float");
 
                     b.Property<int>("RenewalPeriodDurationInMonths")
                         .HasColumnType("int");
 
-                    b.Property<int>("SoftwareId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("SoftwareId");
+                    b.HasKey("OfferId");
 
                     b.ToTable("Subscription");
                 });
@@ -533,21 +532,13 @@ namespace APBDPRO.Migrations
 
             modelBuilder.Entity("APBDPRO.Models.Agreement", b =>
                 {
-                    b.HasOne("APBDPRO.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
+                    b.HasOne("APBDPRO.Models.Offer", "Offer")
+                        .WithOne("Agreement")
+                        .HasForeignKey("APBDPRO.Models.Agreement", "OfferId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("APBDPRO.Models.Software", "Software")
-                        .WithMany()
-                        .HasForeignKey("SoftwareId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Software");
+                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Company", b =>
@@ -580,13 +571,36 @@ namespace APBDPRO.Migrations
                     b.Navigation("Software");
                 });
 
+            modelBuilder.Entity("APBDPRO.Models.Offer", b =>
+                {
+                    b.HasOne("APBDPRO.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("APBDPRO.Models.Software", "Software")
+                        .WithMany()
+                        .HasForeignKey("SoftwareId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Software");
+                });
+
             modelBuilder.Entity("APBDPRO.Models.Payment", b =>
                 {
                     b.HasOne("APBDPRO.Models.Agreement", "Agreement")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("AgreementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("APBDPRO.Models.Offer", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("OfferId");
 
                     b.Navigation("Agreement");
                 });
@@ -615,21 +629,13 @@ namespace APBDPRO.Migrations
 
             modelBuilder.Entity("APBDPRO.Models.Subscription", b =>
                 {
-                    b.HasOne("APBDPRO.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
+                    b.HasOne("APBDPRO.Models.Offer", "Offer")
+                        .WithOne("Subscription")
+                        .HasForeignKey("APBDPRO.Models.Subscription", "OfferId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("APBDPRO.Models.Software", "Software")
-                        .WithMany()
-                        .HasForeignKey("SoftwareId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Software");
+                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("APBDPRO.Models.User", b =>
@@ -643,11 +649,6 @@ namespace APBDPRO.Migrations
                     b.Navigation("UserRole");
                 });
 
-            modelBuilder.Entity("APBDPRO.Models.Agreement", b =>
-                {
-                    b.Navigation("Payments");
-                });
-
             modelBuilder.Entity("APBDPRO.Models.Client", b =>
                 {
                     b.Navigation("Company");
@@ -658,6 +659,15 @@ namespace APBDPRO.Migrations
             modelBuilder.Entity("APBDPRO.Models.Discount", b =>
                 {
                     b.Navigation("DiscountSoftwares");
+                });
+
+            modelBuilder.Entity("APBDPRO.Models.Offer", b =>
+                {
+                    b.Navigation("Agreement");
+
+                    b.Navigation("Payments");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("APBDPRO.Models.SoftwareCategory", b =>

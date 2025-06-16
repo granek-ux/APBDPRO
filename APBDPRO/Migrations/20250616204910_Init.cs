@@ -158,39 +158,6 @@ namespace APBDPRO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Agreements",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    SoftwareId = table.Column<int>(type: "int", nullable: false),
-                    SoftwareVersion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    YearsOfAssistance = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    IsSigned = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Agreements", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Agreements_Client_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Client",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Agreements_Software_SoftwareId",
-                        column: x => x.SoftwareId,
-                        principalTable: "Software",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Discount_Software",
                 columns: table => new
                 {
@@ -215,31 +182,71 @@ namespace APBDPRO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subscription",
+                name: "Offers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    SoftwareId = table.Column<int>(type: "int", nullable: false),
-                    RenewalPeriodDurationInMonths = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    PriceForFirstInstallment = table.Column<double>(type: "float", nullable: false)
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    SoftwareId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subscription", x => x.Id);
+                    table.PrimaryKey("PK_Offers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Subscription_Client_ClientId",
+                        name: "FK_Offers_Client_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Client",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Subscription_Software_SoftwareId",
+                        name: "FK_Offers_Software_SoftwareId",
                         column: x => x.SoftwareId,
                         principalTable: "Software",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Agreements",
+                columns: table => new
+                {
+                    OfferId = table.Column<int>(type: "int", nullable: false),
+                    SoftwareVersion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    YearsOfAssistance = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    IsSigned = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Agreements", x => x.OfferId);
+                    table.ForeignKey(
+                        name: "FK_Agreements_Offers_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subscription",
+                columns: table => new
+                {
+                    OfferId = table.Column<int>(type: "int", nullable: false),
+                    RenewalPeriodDurationInMonths = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PriceForFirstInstallment = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscription", x => x.OfferId);
+                    table.ForeignKey(
+                        name: "FK_Subscription_Offers_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -253,7 +260,8 @@ namespace APBDPRO.Migrations
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     AgreementId = table.Column<int>(type: "int", nullable: false),
-                    Refunded = table.Column<bool>(type: "bit", nullable: false)
+                    Refunded = table.Column<bool>(type: "bit", nullable: false),
+                    OfferId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -262,8 +270,13 @@ namespace APBDPRO.Migrations
                         name: "FK_Payment_Agreements_AgreementId",
                         column: x => x.AgreementId,
                         principalTable: "Agreements",
-                        principalColumn: "Id",
+                        principalColumn: "OfferId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payment_Offers_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -346,19 +359,19 @@ namespace APBDPRO.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Agreements_ClientId",
-                table: "Agreements",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Agreements_SoftwareId",
-                table: "Agreements",
-                column: "SoftwareId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Discount_Software_DiscountsId",
                 table: "Discount_Software",
                 column: "DiscountsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Offers_ClientId",
+                table: "Offers",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Offers_SoftwareId",
+                table: "Offers",
+                column: "SoftwareId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_AgreementId",
@@ -366,19 +379,14 @@ namespace APBDPRO.Migrations
                 column: "AgreementId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payment_OfferId",
+                table: "Payment",
+                column: "OfferId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Software_SoftwareCategoryId",
                 table: "Software",
                 column: "SoftwareCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subscription_ClientId",
-                table: "Subscription",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subscription_SoftwareId",
-                table: "Subscription",
-                column: "SoftwareId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserRoleId",
@@ -415,6 +423,9 @@ namespace APBDPRO.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users_Roles");
+
+            migrationBuilder.DropTable(
+                name: "Offers");
 
             migrationBuilder.DropTable(
                 name: "Client");
