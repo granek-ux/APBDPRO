@@ -9,12 +9,12 @@ public class Payment
     [Key] public int Id { get; set; }
     public DateTime PaymentDate { get; set; }
     public double Amount { get; set; }
-    [ForeignKey(nameof(Agreement))]
-    public int AgreementId { get; set; }
+    [ForeignKey(nameof(Offer))]
+    public int OfferId { get; set; }
     
     public bool Refunded { get; set; } = false;
     
-    public Agreement Agreement { get; set; } =  null!;
+    public Offer Offer { get; set; } =  null!;
     
     
 }

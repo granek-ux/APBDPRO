@@ -84,10 +84,13 @@ public class SubscriptionsService : ISubscriptionsService
 
     }
 
-    public Task PaySubscriptionAsync(PaySubscriptionDto paySubscriptionDto, CancellationToken cancellationToken)
+    public async Task PaySubscriptionAsync(PaySubscriptionDto paySubscriptionDto, CancellationToken cancellationToken)
     {
+        var sub = await _context.Subscriptions.FirstOrDefaultAsync(e=> e.Name == paySubscriptionDto.SubscriptionName,cancellationToken);
+        if (sub is null)
+            throw new NotFoundException("Subscription not found");
+        var lastPayment = _context.Payments.Where(e=> e.OfferId == sub.OfferId).DefaultIfEmpty().MaxAsync(e=> e.PaymentDate, cancellationToken);
         
-        var lastPayment = _context;
         throw new NotImplementedException();
     }
 }

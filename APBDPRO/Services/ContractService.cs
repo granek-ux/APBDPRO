@@ -150,7 +150,7 @@ public class ContractService : IContractService
 
             var payment = new Payment
             {
-                AgreementId = agreement.OfferId,
+                OfferId = agreement.OfferId,
                 Amount = wantToPay,
                 PaymentDate = DateTime.Today,
             };
