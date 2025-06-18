@@ -16,7 +16,7 @@ public class DatabaseContext : DbContext
     public DbSet<Person> People { get; set; }
     public DbSet<Software> Software { get; set; }
     public DbSet<SoftwareCategory> SoftwareCategories { get; set; }
-    public DbSet<StatusSubsription>  StatusSubsriptions { get; set; }
+    public DbSet<StatusSubscription>  StatusSubsriptions { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; } = null!;
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
@@ -39,10 +39,10 @@ public class DatabaseContext : DbContext
             new UserRole() { Id = 2, Name = "Admin" },
         });
 
-        modelBuilder.Entity<StatusSubsription>().HasData(new List<StatusSubsription>
+        modelBuilder.Entity<StatusSubscription>().HasData(new List<StatusSubscription>
         {
-            new StatusSubsription() { Id = 1, Name = "Active" },
-            new StatusSubsription() { Id = 2, Name = "Cancelled" },
+            new StatusSubscription() { Id = 1, Name = "Active" },
+            new StatusSubscription() { Id = 2, Name = "Cancelled" },
         });
 
     }

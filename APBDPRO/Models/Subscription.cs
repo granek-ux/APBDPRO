@@ -17,9 +17,9 @@ public class Subscription
     
     public double PriceForFirstInstallment { get; set; }
 
-    [ForeignKey(nameof(StatusSubsription))]
+    [ForeignKey(nameof(StatusSubscription))]
     public int StatusSubscriptionId { get; set; } = 1;
     
-    public StatusSubsription StatusSubsription { get; set; } = null!;
+    public StatusSubscription StatusSubscription { get; set; } = null!;
     public Offer Offer { get; set; } = null!;
 }

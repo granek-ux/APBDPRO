@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using APBD25_CW11.Exceptions;
-using APBDPRO.Data;
+﻿using APBDPRO.Data;
+using APBDPRO.Exceptions;
 using APBDPRO.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +8,12 @@ namespace APBDPRO.Services;
 public class ProfitService : IProfitService
 {
     private readonly DatabaseContext _context;
+    private readonly ICurrencyHelper _currencyHelper;
 
-    public ProfitService(DatabaseContext context)
+    public ProfitService(DatabaseContext context, ICurrencyHelper currencyHelper)
     {
         _context = context;
+        _currencyHelper = currencyHelper;
     }
 
     public async Task<double> GetAllProfit(string currency, CancellationToken cancellationToken)
@@ -25,7 +26,7 @@ public class ProfitService : IProfitService
             .ToListAsync(cancellationToken));
 
         var profitInPln = payments.Sum(p => p.Amount);
-        return await CurrencyHelper.ChangeCurrency(profitInPln, currency);
+        return await _currencyHelper.ChangeCurrency(profitInPln, currency);
     }
 
     public async Task<double> GetProductProfit(string currency, string softwareName,
@@ -44,7 +45,7 @@ public class ProfitService : IProfitService
                         e.Offer.SoftwareId == software.Id).ToListAsync(cancellationToken));
 
         var profit = payments.Sum(p => p.Amount);
-        return await CurrencyHelper.ChangeCurrency(profit, currency);
+        return await _currencyHelper.ChangeCurrency(profit, currency);
     }
 
     public async Task<double> GetAllProfitPredicted(string currency, CancellationToken cancellationToken)
@@ -64,7 +65,7 @@ public class ProfitService : IProfitService
 
         pay += activeSubscriptions.Sum(s => s.Offer.Price); // 1 więcje
 
-        return await CurrencyHelper.ChangeCurrency(pay, currency);
+        return await _currencyHelper.ChangeCurrency(pay, currency);
     }
 
     public async Task<double> GetProductProfitPredicted(string currency, string softwareName,
@@ -90,6 +91,6 @@ public class ProfitService : IProfitService
 
         pay += activeSubscriptions.Sum(s => s.Offer.Price); // 1 więcje
 
-        return await CurrencyHelper.ChangeCurrency(pay, currency);
+        return await _currencyHelper.ChangeCurrency(pay, currency);
     }
 }

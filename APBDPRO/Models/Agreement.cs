@@ -10,8 +10,6 @@ public class Agreement
     [Key]
     [ForeignKey(nameof(Offer))]
     public int OfferId { get; set; }
-    [ForeignKey(nameof(Client))]
-
     [MaxLength(100)]
     public string SoftwareVersion { get; set; } = null!;
     

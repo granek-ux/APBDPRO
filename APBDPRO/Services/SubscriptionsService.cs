@@ -1,5 +1,5 @@
-﻿using APBD25_CW11.Exceptions;
-using APBDPRO.Data;
+﻿using APBDPRO.Data;
+using APBDPRO.Exceptions;
 using APBDPRO.Models;
 using APBDPRO.Models.Dtos;
 using Humanizer;
@@ -45,15 +45,20 @@ public class SubscriptionsService : ISubscriptionsService
 
             if (software is null)
                 throw new NotFoundException("Software not found");
-
-            var discount = await _context.DiscountSoftware
-                .Where(e => e.SoftwareId == software.Id && e.Discount.DateFrom <= DateTime.Today &&
-                            e.Discount.DateTo >= DateTime.Today).DefaultIfEmpty()
-                .MaxAsync(e => e.Discount.Value, cancellationToken);
-
+            
             var price = addSubscriptionDto.Price;
 
-            price = price * (1 - (double)discount / 100);
+            if (await _context.DiscountSoftware
+                    .Where(e => e.SoftwareId == software.Id && e.Discount.DateFrom <= DateTime.Today &&
+                                e.Discount.DateTo >= DateTime.Today).AnyAsync(cancellationToken))
+            {
+                var discount = await _context.DiscountSoftware
+                    .Where(e => e.SoftwareId == software.Id && e.Discount.DateFrom <= DateTime.Today &&
+                                e.Discount.DateTo >= DateTime.Today).DefaultIfEmpty()
+                    .MaxAsync(e => e.Discount.Value, cancellationToken);
+
+                price = price * (1 - (double)discount / 100);
+            }
 
             var checkPreviousAgreement =
                 await _context.Agreements.AnyAsync(e => e.Offer.ClientId == client.Id, cancellationToken);
@@ -95,7 +100,7 @@ public class SubscriptionsService : ISubscriptionsService
 
     public async Task PaySubscriptionAsync(PaySubscriptionDto paySubscriptionDto, CancellationToken cancellationToken)
     {
-        var sub = await _context.Subscriptions.Include(e => e.Offer).Include(e => e.StatusSubsription)
+        var sub = await _context.Subscriptions.Include(e => e.Offer).Include(e => e.StatusSubscription)
             .FirstOrDefaultAsync(e => e.Name == paySubscriptionDto.SubscriptionName, cancellationToken);
         if (sub is null)
             throw new NotFoundException("Subscription not found");

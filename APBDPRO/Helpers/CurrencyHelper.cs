@@ -1,15 +1,22 @@
 ﻿using System.Text.Json;
+using APBDPRO.Models;
 
 namespace APBDPRO.Helpers;
 
-public class CurrencyHelper
+public class CurrencyHelper : ICurrencyHelper
 {
-    public static async Task<double> ChangeCurrency(double amount, string currency)
+    private readonly HttpClient _httpClient;
+
+    public CurrencyHelper(HttpClient httpClient)
     {
-        var httpClient =  new HttpClient();
+        _httpClient = httpClient;
+    }
+    
+    public async Task<double> ChangeCurrency(double amount, string currency)
+    {
         if(currency.ToLower().Equals("pl"))
             return amount;
-        var response = await httpClient.GetAsync($"https://api.nbp.pl/api/exchangerates/rates/A/{currency}/");
+        var response = await _httpClient.GetAsync($"https://api.nbp.pl/api/exchangerates/rates/A/{currency}/");
         
         response.EnsureSuccessStatusCode();
 
@@ -21,19 +28,5 @@ public class CurrencyHelper
         });
         
         return data.Rates[0].Mid*amount;
-    }
-}
-public class ExchangeRateResponse
-{
-    public string Table { get; set; }
-    public string Currency { get; set; }
-    public string Code { get; set; }
-    public Rate[] Rates { get; set; }
-
-    public class Rate
-    {
-        public string No { get; set; }
-        public string EffectiveDate { get; set; }
-        public double Mid { get; set; }
     }
 }

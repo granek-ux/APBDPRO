@@ -3,167 +3,168 @@ using APBDPRO.Exceptions;
 using APBDPRO.Helpers;
 using APBDPRO.Models;
 using APBDPRO.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace APBDPROUnitTests;
 
-public class ProfitServiceTests
+public class ProfitServiceTests : IDisposable
 {
+    private readonly SqliteConnection _connection;
     private readonly DatabaseContext _context;
     private readonly ProfitService _service;
     private readonly Mock<ICurrencyHelper> _currencyHelperMock;
 
     public ProfitServiceTests()
     {
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+
         var options = new DbContextOptionsBuilder<DatabaseContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseSqlite(_connection)
             .Options;
 
         _context = new DatabaseContext(options);
+        _context.Database.EnsureCreated();
 
         _currencyHelperMock = new Mock<ICurrencyHelper>();
         _currencyHelperMock.Setup(x => x.ChangeCurrency(It.IsAny<double>(), It.IsAny<string>()))
             .ReturnsAsync((double amount, string _) => amount); // simulate no conversion
 
         _service = new ProfitService(_context, _currencyHelperMock.Object);
-
-        SeedData();
+        
+        SeedDatabase().Wait();
     }
 
-    private void SeedData()
+    public void Dispose()
     {
-        var software = new Software
-        {
-            Id = 1,
-            Name = "AppX",
-            Description = "AppX Desc",
-            ActualVersion = "v1.0.0",
-            Price = 100,
-            SoftwareCategoryId = 1,
-            SoftwareCategory = new SoftwareCategory { Id = 1, Name = "Utility" }
-        };
-
-        var status = new StatusSubscription { Id = 1, Name = "Active" };
-
-        var offer1 = new Offer
-        {
-            Id = 1,
-            Price = 100,
-            SoftwareId = 1,
-            Software = software,
-            ClientId = 1,
-            Payments = new List<Payment>()
-        };
-
-        var offer2 = new Offer
-        {
-            Id = 2,
-            Price = 200,
-            SoftwareId = 1,
-            Software = software,
-            ClientId = 1,
-            Payments = new List<Payment>()
-        };
-
-        var agreementSigned = new Agreement
-        {
-            OfferId = 1, 
-            Offer = offer1,
-            SoftwareVersion = "v1.0.0",
-            YearsOfAssistance = 2,
-            StartDate = DateTime.Now,
-            EndDate = DateTime.Now.AddYears(2),
-            IsCanceled = false,
-            IsSigned = true
-        };
-
-        var agreementUnsigned = new Agreement
-        {
-            OfferId = 2, // matches offer2
-            Offer = offer2,
-            SoftwareVersion = "v1.0.0",
-            YearsOfAssistance = 1,
-            StartDate = DateTime.Now,
-            EndDate = DateTime.Now.AddYears(1),
-            IsCanceled = false,
-            IsSigned = false
-        };
-
-        var subscription = new Subscription
-        {
-            OfferId = 1,
-            Offer = offer1,
-            StatusSubscriptionId = 1,
-            Name = "Standard"
-        };
-
-        var payment1 = new Payment
-        {
-            Id = 1,
-            Offer = offer1,
-            Amount = 100,
-            Refunded = false
-        };
-
-        var payment2 = new Payment
-        {
-            Id = 2,
-            Offer = offer2,
-            Amount = 200,
-            Refunded = false
-        };
-
-        offer1.Agreement = agreementSigned;
-        offer2.Agreement = agreementUnsigned;
-        offer1.Subscription = subscription;
-
-        offer1.Payments.Add(payment1);
-        offer2.Payments.Add(payment2);
-
-        _context.Software.Add(software);
-        _context.StatusSubsriptions.Add(status);
-        _context.Offers.AddRange(offer1, offer2);
-        _context.Agreements.AddRange(agreementSigned, agreementUnsigned);
-        _context.Subscriptions.Add(subscription);
-        _context.Payments.AddRange(payment1, payment2);
-
-        _context.SaveChanges();
+        _context.Dispose();
+        _connection.Dispose();
     }
+private async Task SeedDatabase()
+        {
+            var software = new Software
+            {
+                Name = "TestSoft",
+                Description = "Opis",
+                ActualVersion = "1.0",
+                Price = 500,
+                SoftwareCategory = new SoftwareCategory { Name = "TestCat" }
+            };
 
-    [Fact]
-    public async Task GetAllProfit_ShouldReturnCorrectSum()
-    {
-        var result = await _service.GetAllProfit("PLN", CancellationToken.None);
-        Assert.Equal(200, result); // jeśli payment2 ma podpisaną umowę
+            var person = new Person
+            {
+                FirstName = "Jan",
+                LastName = "Kowalski",
+                PESEL = "12345678901"
+            };
+
+            var client = new Client
+            {
+                Person = person,
+                Adres = "ul. Testowa 1, 00-000 Warszawa",
+                Email = "test@example.com",
+                PhoneNumber = 123456789
+            };
+
+            var offer = new Offer
+            {
+                Client = client,
+                Software = software,
+                Price = 100
+            };
+
+            var subscription = new Subscription
+            {
+                Offer = offer,
+                Name = "Sub1",
+                PriceForFirstInstallment = 100,
+                RenewalPeriodDurationInMonths = 1,
+                StatusSubscription = new StatusSubscription
+                {
+                    Name = "Active"
+                }
+            };
+
+            var agreement = new Agreement
+            {
+                Offer = offer,
+                SoftwareVersion = "1.0",
+                YearsOfAssistance = 1,
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddYears(1),
+                IsSigned = true,
+                IsCanceled = false
+            };
+
+            var payment1 = new Payment
+            {
+                Offer = offer,
+                Amount = 100,
+                PaymentDate = DateTime.Today,
+                Refunded = false
+            };
+
+            var payment2 = new Payment
+            {
+                Offer = offer,
+                Amount = 200,
+                PaymentDate = DateTime.Today,
+                Refunded = false
+            };
+
+            await _context.AddAsync(subscription);
+            await _context.AddAsync(agreement);
+            await _context.AddAsync(payment1);
+            await _context.AddAsync(payment2);
+            await _context.SaveChangesAsync();
+        }
+
+        [Fact]
+        public async Task GetAllProfit_ReturnsCorrectAmount()
+        {
+            var result = await _service.GetAllProfit("USD", CancellationToken.None);
+
+            // 100 + 200 = 300, multiplied by 2 in mock = 600
+            Assert.Equal(600, result);
+        }
+
+        [Fact]
+        public async Task GetProductProfit_ReturnsCorrectAmount()
+        {
+            var result = await _service.GetProductProfit("USD", "TestSoft", CancellationToken.None);
+
+            Assert.Equal(600, result); // 300 * 2
+        }
+
+        [Fact]
+        public async Task GetAllProfitPredicted_ReturnsCorrectAmount()
+        {
+            var result = await _service.GetAllProfitPredicted("USD", CancellationToken.None);
+            
+            Assert.Equal(600, result); 
+        }
+
+        [Fact]
+        public async Task GetProductProfitPredicted_ReturnsCorrectAmount()
+        {
+            var result = await _service.GetProductProfitPredicted("USD", "TestSoft", CancellationToken.None);
+
+            Assert.Equal(600, result); 
+        }
+
+        [Fact]
+        public async Task GetProductProfit_WithInvalidSoftware_ThrowsNotFoundException()
+        {
+            await Assert.ThrowsAsync<APBDPRO.Exceptions.NotFoundException>(() =>
+                _service.GetProductProfit("USD", "InvalidSoft", CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetProductProfitPredicted_WithInvalidSoftware_ThrowsNotFoundException()
+        {
+            await Assert.ThrowsAsync<APBDPRO.Exceptions.NotFoundException>(() =>
+                _service.GetProductProfitPredicted("USD", "InvalidSoft", CancellationToken.None));
+        }
     }
-
-    [Fact]
-    public async Task GetProductProfit_ShouldReturnCorrectSum()
-    {
-        var result = await _service.GetProductProfit("PLN", "AppX", CancellationToken.None);
-        Assert.Equal(300, result);
-    }
-
-    [Fact]
-    public async Task GetAllProfitPredicted_ShouldIncludePredictedValues()
-    {
-        var result = await _service.GetAllProfitPredicted("PLN", CancellationToken.None);
-        Assert.Equal(600, result);
-    }
-
-    [Fact]
-    public async Task GetProductProfitPredicted_ShouldIncludePredictedValues()
-    {
-        var result = await _service.GetProductProfitPredicted("PLN", "AppX", CancellationToken.None);
-        Assert.Equal(600, result);
-    }
-
-    [Fact]
-    public async Task GetProductProfit_ShouldThrowIfSoftwareNotFound()
-    {
-        await Assert.ThrowsAsync<NotFoundException>(() =>
-            _service.GetProductProfit("PLN", "Nonexistent", CancellationToken.None));
-    }
-
-}
