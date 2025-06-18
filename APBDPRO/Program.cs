@@ -9,13 +9,13 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Registering services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DatabaseContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB"))
 );
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientService, ClientService>();
@@ -23,6 +23,8 @@ builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IProfitService, ProfitService>();
 builder.Services.AddScoped<ICurrencyHelper, CurrencyHelper>();
+
+
 
     builder.Services.AddAuthentication(options =>
     {
@@ -37,7 +39,7 @@ builder.Services.AddScoped<ICurrencyHelper, CurrencyHelper>();
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(2),
             ValidIssuer = builder.Configuration["Jwt:Issuer"], 
-            ValidAudience = builder.Configuration["Jwt:Audience"], //should come from configuration
+            ValidAudience = builder.Configuration["Jwt:Audience"], 
             IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SymmetricSecurityKey"]!))
         };
         
@@ -61,7 +63,7 @@ builder.Services.AddScoped<ICurrencyHelper, CurrencyHelper>();
             ValidateLifetime = false,
             ClockSkew = TimeSpan.FromMinutes(2),
             ValidIssuer = builder.Configuration["Jwt:Issuer"], 
-            ValidAudience = builder.Configuration["Jwt:Audience"], //should come from configuration
+            ValidAudience = builder.Configuration["Jwt:Audience"], 
             IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SymmetricSecurityKey"]!))
         };
     }).AddJwtBearer("OnlyAdminExpirationScheme",opt =>
@@ -73,7 +75,7 @@ builder.Services.AddScoped<ICurrencyHelper, CurrencyHelper>();
             ValidateLifetime = false,
             ClockSkew = TimeSpan.FromMinutes(2),
             ValidIssuer = builder.Configuration["Jwt:Issuer"], 
-            ValidAudience = builder.Configuration["Jwt:Audience"], //should come from configuration
+            ValidAudience = builder.Configuration["Jwt:Audience"], 
             IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SymmetricSecurityKey"]!))
         };
     });
@@ -92,9 +94,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Configure the HTTP request pipeline.
 app.UseAuthorization();
-// app.UseHttpsRedirection();
 
 app.MapControllers();
 

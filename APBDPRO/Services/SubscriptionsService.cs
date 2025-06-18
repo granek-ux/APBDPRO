@@ -37,7 +37,7 @@ public class SubscriptionsService : ISubscriptionsService
             };
 
             if (client is null)
-                throw new NoMatchFoundException("Client not found");
+                throw new NotFoundException("Client not found");
 
             var software =
                 await _context.Software.FirstOrDefaultAsync(e => e.Name == addSubscriptionDto.SoftwareName,

@@ -12,8 +12,6 @@ public class SecurityHelpers
         {
             rng.GetBytes(salt);
         }
-
-        //bcrypt/pbkdf2
         string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
             password: password,
             salt: salt,

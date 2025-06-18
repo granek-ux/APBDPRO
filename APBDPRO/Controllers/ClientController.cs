@@ -10,7 +10,7 @@ namespace APBDPRO.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
     public class ClientController : ControllerBase
     {
         private readonly IClientService _clientService;
@@ -19,13 +19,7 @@ namespace APBDPRO.Controllers
         {
             _clientService = clientService;
         }
-
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok();
-        }
-
+        
         [HttpPost("Person")]
         public async Task<IActionResult> AddPersonAsync([FromBody] PersonDto person,
             CancellationToken cancellationToken)
@@ -72,7 +66,7 @@ namespace APBDPRO.Controllers
         }
 
         [HttpPut("Person/{pesel}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditPerson(string pesel, [FromBody] PersonEditDto person,CancellationToken cancellationToken)
         {
             try
@@ -111,7 +105,7 @@ namespace APBDPRO.Controllers
             return Created();
         }
         [HttpPut("Comoany/{KRS}")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditCompany(string KRS, [FromBody] CompanyEditDto company,CancellationToken cancellationToken)
         {
             try

@@ -30,7 +30,7 @@ public class ProfitServiceTests : IDisposable
 
         _currencyHelperMock = new Mock<ICurrencyHelper>();
         _currencyHelperMock.Setup(x => x.ChangeCurrency(It.IsAny<double>(), It.IsAny<string>()))
-            .ReturnsAsync((double amount, string _) => amount); // simulate no conversion
+            .ReturnsAsync((double amount, string _) => amount);
 
         _service = new ProfitService(_context, _currencyHelperMock.Object);
         
@@ -125,8 +125,6 @@ private async Task SeedDatabase()
         public async Task GetAllProfit_ReturnsCorrectAmount()
         {
             var result = await _service.GetAllProfit("USD", CancellationToken.None);
-
-            // 100 + 200 = 300, multiplied by 2 in mock = 600
             Assert.Equal(600, result);
         }
 
@@ -135,7 +133,7 @@ private async Task SeedDatabase()
         {
             var result = await _service.GetProductProfit("USD", "TestSoft", CancellationToken.None);
 
-            Assert.Equal(600, result); // 300 * 2
+            Assert.Equal(600, result);
         }
 
         [Fact]

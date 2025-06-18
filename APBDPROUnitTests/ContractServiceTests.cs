@@ -93,11 +93,8 @@ namespace APBDPROUnitTests
                 HowMuchLongerAssistance = 2,
                 Price = offer.Price
             };
-
-            // Act
+            
             await _service.AddAgreementAsync(dto, CancellationToken.None);
-
-            // Assert
             var agreement = await _context.Agreements.FirstOrDefaultAsync();
             Assert.NotNull(agreement);
             Assert.Equal(dto.StartDate, agreement.StartDate);
@@ -111,7 +108,6 @@ namespace APBDPROUnitTests
         [Fact]
         public async Task PayAgreementAsync_ShouldSignAgreement()
         {
-            // Arrange
             var person = new Person
             {
                 FirstName = "Jan",
@@ -158,8 +154,7 @@ namespace APBDPROUnitTests
                 IsSigned = false,
                 IsCanceled = false
             };
-
-            // Dodaj wszystko JEDNORAZOWO
+            
             await _context.People.AddAsync(person);
             await _context.Clients.AddAsync(client);
             await _context.SoftwareCategories.AddAsync(softwareCategory);
@@ -174,11 +169,9 @@ namespace APBDPROUnitTests
                 SoftwareName = "TestSoft",
                 Amount = 500
             };
-
-            // Act
+            
             await _service.PayAgreementAsync(dto, CancellationToken.None);
-
-            // Assert
+            
             var updatedAgreement = await _context.Agreements
                 .Include(a => a.Offer)
                 .ThenInclude(o => o.Payments)

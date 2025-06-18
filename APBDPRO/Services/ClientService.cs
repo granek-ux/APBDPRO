@@ -76,7 +76,6 @@ public class ClientService : IClientService
 
     public async Task DeletePersonAsync(string pesel, CancellationToken cancellationToken)
     {
-        //todo Sprawdzić to
         if (pesel.Length != 11)
             throw new BadRequestException("PESEL must be 11 characters long");
         var person = await _context.Clients.Include(e => e.Person).FirstOrDefaultAsync(e => e.Person.PESEL == pesel , cancellationToken);
