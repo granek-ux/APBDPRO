@@ -16,8 +16,10 @@ public class Subscription
     [MaxLength(50)] public string Name { get; set; } = null!;
     
     public double PriceForFirstInstallment { get; set; }
+
+    [ForeignKey(nameof(StatusSubsription))]
+    public int StatusSubscriptionId { get; set; } = 1;
     
+    public StatusSubsription StatusSubsription { get; set; } = null!;
     public Offer Offer { get; set; } = null!;
-
-
 }

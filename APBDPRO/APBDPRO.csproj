@@ -27,6 +27,7 @@
       <Folder Include="Areas\IncomeController\Views\" />
       <Folder Include="Controllers\" />
       <Folder Include="Middlewares\" />
+      <Folder Include="Test\" />
     </ItemGroup>
 
 </Project>

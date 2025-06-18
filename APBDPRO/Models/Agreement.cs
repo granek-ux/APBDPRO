@@ -19,7 +19,7 @@ public class Agreement
     
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public bool IsPaid { get; set; }
+    public bool IsCanceled { get; set; }
     public bool IsSigned { get; set; }
     
     public Offer Offer { get; set; } = null!;

@@ -87,7 +87,7 @@ public class ContractService : IContractService
             YearsOfAssistance = 1 + addAgreementDto.HowMuchLongerAssistance,
             StartDate = addAgreementDto.StartDate,
             EndDate = addAgreementDto.EndDate,
-            IsPaid = false,
+            IsCanceled = false,
             IsSigned = false,
         };
 
@@ -129,7 +129,7 @@ public class ContractService : IContractService
                 .Agreements
                 .Include(e => e.Offer).ThenInclude( e=> e.Payments)
                 .FirstOrDefaultAsync(
-                    e => e.Offer.ClientId == client.Id && e.Offer.SoftwareId == software.Id && e.IsPaid == false &&
+                    e => e.Offer.ClientId == client.Id && e.Offer.SoftwareId == software.Id && e.IsSigned == false &&
                          e.EndDate >= DateTime.Today, cancellationToken);
 
 
@@ -143,7 +143,6 @@ public class ContractService : IContractService
 
             if (payedAgreement + wantToPay >= agreement.Offer.Price)
             {
-                agreement.IsPaid = true;
                 agreement.IsSigned = true;
                 wantToPay = agreement.Offer.Price - payedAgreement;
             }
