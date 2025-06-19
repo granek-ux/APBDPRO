@@ -79,7 +79,7 @@ public class SubscriptionsServiceTests : IDisposable
 
         await _service.AddSubscriptionAsync(dto, CancellationToken.None);
 
-        var subscription = await _context.Subscriptions.Include(s => s.Offer).FirstOrDefaultAsync();
+        var subscription = await _context.Subscriptions.Include(s => s.Offer).FirstOrDefaultAsync(e => e.Name == dto.Name);
         Assert.NotNull(subscription);
         Assert.Equal(dto.Name, subscription.Name);
         Assert.Equal(client.Id, subscription.Offer.ClientId);

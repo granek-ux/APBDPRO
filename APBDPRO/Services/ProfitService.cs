@@ -53,7 +53,7 @@ public class ProfitService : IProfitService
         var pay = await _context.Payments
             .Where(e => !e.Refunded && e.Offer.Agreement != null && e.Offer.Agreement.IsSigned)
             .SumAsync(e => e.Amount, cancellationToken);
-        pay += await _context.Agreements.Where(e => !e.IsSigned && !e.IsCanceled)
+        pay += await _context.Agreements.Where(e => !e.IsSigned && !e.IsCanceled && e.EndDate >= DateTime.Now)
             .SumAsync(e => e.Offer.Price, cancellationToken);
         pay += await _context.Payments.Where(e => !e.Refunded && e.Offer.Subscription != null)
             .SumAsync(e => e.Amount, cancellationToken);
@@ -78,7 +78,7 @@ public class ProfitService : IProfitService
         var pay = await _context.Payments
             .Where(e => !e.Refunded && e.Offer.Agreement != null && e.Offer.Agreement.IsSigned &&
                         e.Offer.SoftwareId == software.Id).SumAsync(e => e.Amount, cancellationToken);
-        pay += await _context.Agreements.Where(e => !e.IsSigned && !e.IsCanceled && e.Offer.SoftwareId == software.Id)
+        pay += await _context.Agreements.Where(e => !e.IsSigned && !e.IsCanceled && e.Offer.SoftwareId == software.Id && !e.IsCanceled && e.EndDate >= DateTime.Now)
             .SumAsync(e => e.Offer.Price, cancellationToken);
         pay += await _context.Payments
             .Where(e => !e.Refunded && e.Offer.Subscription != null && e.Offer.SoftwareId == software.Id)

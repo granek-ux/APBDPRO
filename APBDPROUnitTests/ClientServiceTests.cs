@@ -124,7 +124,7 @@ public class ClientServiceTests : IDisposable
     {
         var dto = new CompanyDto
         {
-            KRS = "1234567890",
+            KRS = Guid.NewGuid().ToString().Substring(0, 10),
             Name = "Test Co",
             Address = "Test St",
             Email = "co@example.com",

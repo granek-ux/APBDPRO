@@ -88,6 +88,16 @@ public class SubscriptionsService : ISubscriptionsService
             };
 
             await _context.Subscriptions.AddAsync(sub, cancellationToken);
+            
+            var firstPayment = new Payment
+            {
+                
+                Amount = price,
+                OfferId = offer.Id,
+                PaymentDate = DateTime.Today,
+                Refunded = false
+            };
+            await _context.Payments.AddAsync(firstPayment, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }

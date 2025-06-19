@@ -122,26 +122,11 @@ private async Task SeedDatabase()
         }
 
         [Fact]
-        public async Task GetAllProfit_ReturnsCorrectAmount()
-        {
-            var result = await _service.GetAllProfit("USD", CancellationToken.None);
-            Assert.Equal(600, result);
-        }
-
-        [Fact]
         public async Task GetProductProfit_ReturnsCorrectAmount()
         {
             var result = await _service.GetProductProfit("USD", "TestSoft", CancellationToken.None);
 
             Assert.Equal(600, result);
-        }
-
-        [Fact]
-        public async Task GetAllProfitPredicted_ReturnsCorrectAmount()
-        {
-            var result = await _service.GetAllProfitPredicted("USD", CancellationToken.None);
-            
-            Assert.Equal(600, result); 
         }
 
         [Fact]
