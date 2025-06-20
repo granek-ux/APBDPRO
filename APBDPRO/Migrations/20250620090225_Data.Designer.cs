@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APBDPRO.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250618180013_Data")]
+    [Migration("20250620090225_Data")]
     partial class Data
     {
         /// <inheritdoc />
@@ -497,6 +497,18 @@ namespace APBDPRO.Migrations
                     b.HasIndex("UserRoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            IdUser = 1,
+                            Login = "admin",
+                            Password = "rrLQWg2e++4RSCGid02OYSlPuHz21DShv+H1RPrpIRk=",
+                            RefreshToken = "OnVJ/FbGSyIUCpdceCuCxti7b7wrg+/+TnzGohsVdLM=",
+                            RefreshTokenExp = new DateTime(2025, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Salt = "7FPhRi75IVLn9VcF6TMfrw==",
+                            UserRoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.UserRole", b =>

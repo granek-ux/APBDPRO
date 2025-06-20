@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APBDPRO.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250618175645_Init")]
+    [Migration("20250620090208_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -294,18 +294,6 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Status_Subscription");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Active"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Cancelled"
-                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Subscription", b =>
@@ -391,18 +379,6 @@ namespace APBDPRO.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users_Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "User"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.Agreement", b =>

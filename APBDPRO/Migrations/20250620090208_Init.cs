@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace APBDPRO.Migrations
 {
     /// <inheritdoc />
@@ -291,24 +289,6 @@ namespace APBDPRO.Migrations
                         principalTable: "Status_Subscription",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Status_Subscription",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Active" },
-                    { 2, "Cancelled" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users_Roles",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "User" },
-                    { 2, "Admin" }
                 });
 
             migrationBuilder.CreateIndex(

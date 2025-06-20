@@ -12,12 +12,12 @@ public class UserTests
     public UserTests()
     {
         var options = new DbContextOptionsBuilder<DatabaseContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         _context = new DatabaseContext(options);
 
-        SeedData(); 
+        SeedData();
     }
 
     private void SeedData()

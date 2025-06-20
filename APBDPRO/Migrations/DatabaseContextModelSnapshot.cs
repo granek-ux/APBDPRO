@@ -494,6 +494,18 @@ namespace APBDPRO.Migrations
                     b.HasIndex("UserRoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            IdUser = 1,
+                            Login = "admin",
+                            Password = "rrLQWg2e++4RSCGid02OYSlPuHz21DShv+H1RPrpIRk=",
+                            RefreshToken = "OnVJ/FbGSyIUCpdceCuCxti7b7wrg+/+TnzGohsVdLM=",
+                            RefreshTokenExp = new DateTime(2025, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Salt = "7FPhRi75IVLn9VcF6TMfrw==",
+                            UserRoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("APBDPRO.Models.UserRole", b =>

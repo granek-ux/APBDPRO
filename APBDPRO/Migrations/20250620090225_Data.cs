@@ -37,6 +37,24 @@ namespace APBDPRO.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Status_Subscription",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Active" },
+                    { 2, "Cancelled" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users_Roles",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "User" },
+                    { 2, "Admin" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Company",
                 columns: new[] { "Id", "KRS", "Name" },
                 values: new object[] { 1, "1234567890", "Tech Corp" });
@@ -54,6 +72,11 @@ namespace APBDPRO.Migrations
                     { 1, "1.2.3", "Antivirus software", "SafeGuard", 49.990000000000002, 1 },
                     { 2, "2023.1", "Office productivity suite", "OfficeMax", 89.989999999999995, 2 }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "IdUser", "Login", "Password", "RefreshToken", "RefreshTokenExp", "Salt", "UserRoleId" },
+                values: new object[] { 1, "admin", "rrLQWg2e++4RSCGid02OYSlPuHz21DShv+H1RPrpIRk=", "OnVJ/FbGSyIUCpdceCuCxti7b7wrg+/+TnzGohsVdLM=", new DateTime(2025, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), "7FPhRi75IVLn9VcF6TMfrw==", 2 });
 
             migrationBuilder.InsertData(
                 table: "Discount_Software",
@@ -115,8 +138,23 @@ namespace APBDPRO.Migrations
                 keyValue: 2);
 
             migrationBuilder.DeleteData(
+                table: "Status_Subscription",
+                keyColumn: "Id",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
                 table: "Subscription",
                 keyColumn: "OfferId",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Users",
+                keyColumn: "IdUser",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Users_Roles",
+                keyColumn: "Id",
                 keyValue: 1);
 
             migrationBuilder.DeleteData(
@@ -136,6 +174,16 @@ namespace APBDPRO.Migrations
 
             migrationBuilder.DeleteData(
                 table: "Software_Category",
+                keyColumn: "Id",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "Status_Subscription",
+                keyColumn: "Id",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "Users_Roles",
                 keyColumn: "Id",
                 keyValue: 2);
 

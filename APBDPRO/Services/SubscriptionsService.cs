@@ -45,7 +45,7 @@ public class SubscriptionsService : ISubscriptionsService
 
             if (software is null)
                 throw new NotFoundException("Software not found");
-            
+
             var price = addSubscriptionDto.Price;
 
             if (await _context.DiscountSoftware
@@ -88,10 +88,9 @@ public class SubscriptionsService : ISubscriptionsService
             };
 
             await _context.Subscriptions.AddAsync(sub, cancellationToken);
-            
+
             var firstPayment = new Payment
             {
-                
                 Amount = price,
                 OfferId = offer.Id,
                 PaymentDate = DateTime.Today,

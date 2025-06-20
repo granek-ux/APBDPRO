@@ -29,7 +29,7 @@ public class ClientServiceTests : IDisposable
 
         _service = new ClientService(_context);
     }
-    
+
     public void Dispose()
     {
         _context.Dispose();

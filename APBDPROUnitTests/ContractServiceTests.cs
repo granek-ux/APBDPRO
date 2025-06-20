@@ -31,7 +31,6 @@ namespace APBDPROUnitTests
             _context = new DatabaseContext(options);
             _context.Database.EnsureCreated();
             _service = new ContractService(_context);
-            
         }
 
         public void Dispose()
@@ -39,10 +38,10 @@ namespace APBDPROUnitTests
             _context.Dispose();
             _connection.Dispose();
         }
+
         [Fact]
         public async Task AddAgreementAsync_ShouldAddAgreement()
         {
-            
             _context.Agreements.RemoveRange(_context.Agreements);
             _context.Offers.RemoveRange(_context.Offers);
             await _context.SaveChangesAsync();
@@ -85,9 +84,8 @@ namespace APBDPROUnitTests
             var existingAgreement = await _context.Agreements
                 .Include(a => a.Offer)
                 .ThenInclude(o => o.Payments)
-                .FirstOrDefaultAsync(
-                    e => e.Offer.ClientId == 2 && e.Offer.SoftwareId == 1 && e.IsSigned == false &&
-                         e.EndDate >= DateTime.Today);
+                .FirstOrDefaultAsync(e => e.Offer.ClientId == 2 && e.Offer.SoftwareId == 1 && e.IsSigned == false &&
+                                          e.EndDate >= DateTime.Today);
 
             if (existingAgreement is null)
             {

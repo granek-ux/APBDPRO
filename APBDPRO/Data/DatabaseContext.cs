@@ -38,36 +38,36 @@ public class DatabaseContext : DbContext
             new UserRole { Id = 1, Name = "User" },
             new UserRole { Id = 2, Name = "Admin" }
         });
-
+        
         modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     IdUser = 1, Login = "admin", Password = "rrLQWg2e++4RSCGid02OYSlPuHz21DShv+H1RPrpIRk=",
                     Salt = "7FPhRi75IVLn9VcF6TMfrw==", RefreshToken = "OnVJ/FbGSyIUCpdceCuCxti7b7wrg+/+TnzGohsVdLM=",
-                    RefreshTokenExp = DateTime.Now, UserRoleId = 2
+                    RefreshTokenExp = new DateTime(2025, 6, 21), UserRoleId = 2
                 }
             
         );
-
+        
         modelBuilder.Entity<StatusSubscription>().HasData(new List<StatusSubscription>
         {
             new StatusSubscription { Id = 1, Name = "Active" },
             new StatusSubscription { Id = 2, Name = "Cancelled" }
         });
-
+        
         modelBuilder.Entity<Client>().HasData(new List<Client>
         {
             new Client { Id = 1, Adres = "123 Main St", Email = "client1@example.com", PhoneNumber = 123456789 },
             new Client { Id = 2, Adres = "456 Elm St", Email = "client2@example.com", PhoneNumber = 987654321 }
         });
-
+        
         modelBuilder.Entity<Company>().HasData(new Company
         {
             Id = 1,
             Name = "Tech Corp",
             KRS = "1234567890"
         });
-
+        
         modelBuilder.Entity<Person>().HasData(new Person
         {
             Id = 2,
@@ -76,13 +76,13 @@ public class DatabaseContext : DbContext
             PESEL = "90010112345",
             Deleted = false
         });
-
+        
         modelBuilder.Entity<SoftwareCategory>().HasData(new List<SoftwareCategory>
         {
             new SoftwareCategory { Id = 1, Name = "Antivirus" },
             new SoftwareCategory { Id = 2, Name = "Office Suite" }
         });
-
+        
         modelBuilder.Entity<Software>().HasData(new List<Software>
         {
             new Software
@@ -104,7 +104,7 @@ public class DatabaseContext : DbContext
                 SoftwareCategoryId = 2
             }
         });
-
+        
         modelBuilder.Entity<Discount>().HasData(new Discount
         {
             Id = 1,
@@ -113,13 +113,13 @@ public class DatabaseContext : DbContext
             DateFrom = new DateTime(2025, 3, 1),
             DateTo = new DateTime(2025, 3, 31)
         });
-
+        
         modelBuilder.Entity<DiscountSoftware>().HasData(new DiscountSoftware
         {
             SoftwareId = 1,
             DiscountsId = 1
         });
-
+        
         modelBuilder.Entity<Offer>().HasData(new Offer
         {
             Id = 1,
@@ -127,7 +127,7 @@ public class DatabaseContext : DbContext
             ClientId = 1,
             SoftwareId = 1
         });
-
+        
         modelBuilder.Entity<Agreement>().HasData(new Agreement
         {
             OfferId = 1,
@@ -138,7 +138,7 @@ public class DatabaseContext : DbContext
             IsCanceled = false,
             IsSigned = true
         });
-
+        
         modelBuilder.Entity<Subscription>().HasData(new Subscription
         {
             OfferId = 1,
@@ -147,7 +147,7 @@ public class DatabaseContext : DbContext
             PriceForFirstInstallment = 29.99,
             StatusSubscriptionId = 1
         });
-
+        
         modelBuilder.Entity<Payment>().HasData(new Payment
         {
             Id = 1,
