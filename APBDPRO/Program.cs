@@ -1,6 +1,7 @@
 using System.Text;
 using APBDPRO.Data;
 using APBDPRO.Helpers;
+using APBDPRO.Middlewares;
 using APBDPRO.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -98,6 +99,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

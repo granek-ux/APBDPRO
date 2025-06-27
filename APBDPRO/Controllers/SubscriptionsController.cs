@@ -13,7 +13,7 @@ namespace APBDPRO.Controllers
     [Authorize]
     public class SubscriptionsController : ControllerBase
     {
-        private readonly ISubscriptionsService  _subscriptionsService;
+        private readonly ISubscriptionsService _subscriptionsService;
 
         public SubscriptionsController(ISubscriptionsService subscriptionsService)
         {
@@ -24,36 +24,16 @@ namespace APBDPRO.Controllers
         public async Task<IActionResult> Add([FromBody] AddSubscriptionDto addSubscriptionDto,
             CancellationToken cancellationToken)
         {
-            try
-            {
-                await _subscriptionsService.AddSubscriptionAsync(addSubscriptionDto, cancellationToken);
-                return Ok();
-            }
-            catch (BadRequestException  e)
-            {
-                return BadRequest(e.Message);
-            }catch (NotFoundException  e)
-            {
-                return NotFound(e.Message);
-            }
+            await _subscriptionsService.AddSubscriptionAsync(addSubscriptionDto, cancellationToken);
+            return Ok();
         }
 
         [HttpPost("Pay")]
         public async Task<IActionResult> Pay([FromBody] PaySubscriptionDto paySubscriptionDto,
             CancellationToken cancellationToken)
         {
-            try
-            {
-                await _subscriptionsService.PaySubscriptionAsync(paySubscriptionDto, cancellationToken);
-                return Ok();
-            }
-            catch (BadRequestException  e)
-            {
-                return BadRequest(e.Message);
-            }catch (NotFoundException  e)
-            {
-                return NotFound(e.Message);
-            }
+            await _subscriptionsService.PaySubscriptionAsync(paySubscriptionDto, cancellationToken);
+            return Ok();
         }
     }
 }

@@ -24,46 +24,16 @@ namespace APBDPRO.Controllers
         public async Task<IActionResult> CreateAgreement([FromBody] AddAgreementDto addAgreementDto,
             CancellationToken cancellationToken)
         {
-            try
-            {
-                await _contractService.AddAgreementAsync(addAgreementDto, cancellationToken);
-                return Ok();
-            }
-            catch (BadRequestException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (NotFoundException e)
-            {
-                return NotFound(e.Message);
-            }
-            catch (Exception e)
-            {
-                return Problem("Unexpected error occurred", statusCode: 500);
-            }
+            await _contractService.AddAgreementAsync(addAgreementDto, cancellationToken);
+            return Ok();
         }
 
         [HttpPost("Pay")]
         public async Task<IActionResult> PayAgreement([FromBody] PayAgreementDto payAgreementDto,
             CancellationToken cancellationToken)
         {
-            try
-            {
-                await _contractService.PayAgreementAsync(payAgreementDto, cancellationToken);
-                return Ok();
-            }
-            catch (BadRequestException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (NotFoundException e)
-            {
-                return NotFound(e.Message);
-            }
-            catch (Exception e)
-            {
-                return Problem("Unexpected error occurred", statusCode: 500);
-            }
+            await _contractService.PayAgreementAsync(payAgreementDto, cancellationToken);
+            return Ok();
         }
     }
 }

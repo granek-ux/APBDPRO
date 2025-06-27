@@ -19,45 +19,30 @@ namespace APBDPRO.Controllers
         }
 
         [HttpGet("Real/Firm")]
-        public async Task<IActionResult> GetRealFirm(CancellationToken cancellationToken,string waluta = "pl")
+        public async Task<IActionResult> GetRealFirm(CancellationToken cancellationToken, string waluta = "pl")
         {
-            return Ok( await _profitService.GetAllProfit(waluta,cancellationToken));
+            return Ok(await _profitService.GetAllProfit(waluta, cancellationToken));
         }
 
         [HttpGet("Real/Product/{Name}")]
-        public async Task<IActionResult> GetRealProduct(string name,CancellationToken cancellationToken,string waluta = "pl")
+        public async Task<IActionResult> GetRealProduct(string name, CancellationToken cancellationToken,
+            string waluta = "pl")
         {
-            try
-            {
-                return Ok(await _profitService.GetProductProfit(waluta,name,cancellationToken));
-            }
-            catch (NotFoundException e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return Ok(await _profitService.GetProductProfit(waluta, name, cancellationToken));
         }
-        
-        
-        
+
+
         [HttpGet("Predicted/Firm")]
-        public async Task<IActionResult> GetPredictedFirm(CancellationToken cancellationToken,string waluta = "pl")
+        public async Task<IActionResult> GetPredictedFirm(CancellationToken cancellationToken, string waluta = "pl")
         {
-            return Ok( await _profitService.GetAllProfitPredicted(waluta,cancellationToken));
+            return Ok(await _profitService.GetAllProfitPredicted(waluta, cancellationToken));
         }
 
         [HttpGet("Predicted/Product/{Name}")]
-        public async Task<IActionResult> GetPredictedProduct(string name,CancellationToken cancellationToken,string waluta = "pl")
+        public async Task<IActionResult> GetPredictedProduct(string name, CancellationToken cancellationToken,
+            string waluta = "pl")
         {
-            try
-            {
-                return Ok(await _profitService.GetProductProfitPredicted(waluta,name,cancellationToken));
-            }
-            catch (NotFoundException e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return Ok(await _profitService.GetProductProfitPredicted(waluta, name, cancellationToken));
         }
     }
 }

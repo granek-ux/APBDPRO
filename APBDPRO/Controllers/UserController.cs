@@ -31,30 +31,16 @@ namespace APBDPRO.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var info = await _userService.LoginUserAsync(loginDto, cancellationToken);
-                return Ok(new { accessToken = info.Item1, refreshToken = info.Item2 });
-            }
-            catch (UnauthorizedException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
+            var info = await _userService.LoginUserAsync(loginDto, cancellationToken);
+            return Ok(new { accessToken = info.Item1, refreshToken = info.Item2 });
         }
 
         [Authorize(AuthenticationSchemes = "IgnoreTokenExpirationScheme")]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(RefreshTokenDto refreshToken, CancellationToken cancellationToken)
         {
-            try
-            {
-                var info = await _userService.RefreshAsync(refreshToken, cancellationToken);
-                return Ok(new { accessToken = info.Item1, refreshToken = info.Item2 });
-            }
-            catch (SecurityException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
+            var info = await _userService.RefreshAsync(refreshToken, cancellationToken);
+            return Ok(new { accessToken = info.Item1, refreshToken = info.Item2 });
         }
     }
 }
